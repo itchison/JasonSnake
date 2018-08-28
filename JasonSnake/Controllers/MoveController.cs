@@ -21,7 +21,7 @@ namespace JasonSnake.Controllers
         }
 
         [HttpPost]
-        public MoveResponse Get(SnakeRequest sr)
+        public MoveResponse Post(SnakeRequest sr)
         {
             InitializeBoard(sr.board);
             ScoreSnakes(sr.board);

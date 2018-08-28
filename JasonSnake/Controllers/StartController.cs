@@ -13,7 +13,7 @@ namespace JasonSnake.Controllers
     public class StartController : ControllerBase
     {
         [HttpPost]
-        public StartResponse Get(SnakeRequest sr)
+        public StartResponse Post(SnakeRequest sr)
         {
             return new StartResponse() { color = "#ff00ff" };
         }

@@ -13,10 +13,9 @@ namespace JasonSnake.Controllers
     public class EndController : ControllerBase
     {
         [HttpPost]
-        public void Get(SnakeRequest sr)
+        public void Post(SnakeRequest sr)
         {
-            //nothing to do?
-            var x = sr;
+            //It'd be fun to put some logic about win loss ratio into a table of some sort.
         }
     }
 }
