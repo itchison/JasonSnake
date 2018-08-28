@@ -38,10 +38,10 @@ namespace JasonSnake.Controllers
             {
                 foreach (var body in snake.body)
                 {
-                    AdjustGrid(body.x, body.y, -1000); //account for board being a bit longer
-                    AdjustScoreRadius(board, body.x, body.y, 3, -100);
-                    AdjustScoreRadius(board, body.x, body.y, 2, -200);
-                    AdjustScoreRadius(board, body.x, body.y, 1, -300);
+                    AdjustGrid(body.x, body.y, -1000);
+                    AdjustScoreRadius(body.x, body.y, 3, -100);
+                    AdjustScoreRadius(body.x, body.y, 2, -200);
+                    AdjustScoreRadius(body.x, body.y, 1, -300);
                 }
             }
 
@@ -52,18 +52,23 @@ namespace JasonSnake.Controllers
             foreach (var pellet in board.food)
             {
                 AdjustGrid(pellet.x, pellet.y, 1000);
-                AdjustScoreRadius(board, pellet.x, pellet.y, 5, 50);
-                AdjustScoreRadius(board, pellet.x, pellet.y, 4, 100);
-                AdjustScoreRadius(board, pellet.x, pellet.y, 3, 200);
-                AdjustScoreRadius(board, pellet.x, pellet.y, 2, 300);
+                AdjustScoreRadius(pellet.x, pellet.y, 5, 50);
+                AdjustScoreRadius(pellet.x, pellet.y, 4, 100);
+                AdjustScoreRadius(pellet.x, pellet.y, 3, 200);
+                AdjustScoreRadius(pellet.x, pellet.y, 2, 300);
             }
         }
 
+        /// <summary>
+        /// We create the GridScore to have a 1 cell border that we score very low
+        /// regular x,y can be used afterwards since we start at -1.
+        /// </summary>
+        /// <param name="board"></param>
         void InitializeBoard(Board board)
         {
             //board loop
             Random r = new Random();
-            for (int x = -1; x < board.width + 1; x++) //2 so we can do edges
+            for (int x = -1; x < board.width + 1; x++)
             {
                 for (int y = -1; y < board.height + 1; y++)
                 {
@@ -78,12 +83,12 @@ namespace JasonSnake.Controllers
             
         }
 
-        void AdjustScoreRadius(Board board, int pelletx, int pellety, int radius, int score)
+        void AdjustScoreRadius(int pelletx, int pellety, int radius, int score)
         {
             foreach (var coord in GridScores.Keys.ToList())
             {
+                //basic math stolen from stackoverflow
                 int deltaX = pelletx - coord.Item1, deltaY = pellety - coord.Item2;
-                // compare the square distance, to avoid an unnecessary square-root
                 if ((deltaX * deltaX) + (deltaY * deltaY) <= (radius * radius))
                 {
                     AdjustGrid(coord.Item1, coord.Item2, score);
