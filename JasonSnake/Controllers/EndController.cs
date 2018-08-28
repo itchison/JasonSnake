@@ -16,6 +16,7 @@ namespace JasonSnake.Controllers
         public void Get(SnakeRequest sr)
         {
             //nothing to do?
+            var x = sr;
         }
     }
 }

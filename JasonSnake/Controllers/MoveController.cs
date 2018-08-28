@@ -38,10 +38,10 @@ namespace JasonSnake.Controllers
             {
                 foreach (var body in snake.body)
                 {
-                    AdjustGrid(body.x + 1, body.y + 1, -1000); //account for board being a bit longer
-                    AdjustScoreRadius(board, body.x + 1, body.y + 1, 3, -100);
-                    AdjustScoreRadius(board, body.x + 1, body.y + 1, 2, -200);
-                    AdjustScoreRadius(board, body.x + 1, body.y + 1, 1, -300);
+                    AdjustGrid(body.x, body.y, -1000); //account for board being a bit longer
+                    AdjustScoreRadius(board, body.x, body.y, 3, -100);
+                    AdjustScoreRadius(board, body.x, body.y, 2, -200);
+                    AdjustScoreRadius(board, body.x, body.y, 1, -300);
                 }
             }
 
@@ -51,11 +51,11 @@ namespace JasonSnake.Controllers
         {
             foreach (var pellet in board.food)
             {
-                AdjustGrid(pellet.x + 1, pellet.y + 1, 1000);
-                AdjustScoreRadius(board, pellet.x + 1, pellet.y + 1, 5, 50);
-                AdjustScoreRadius(board, pellet.x + 1, pellet.y + 1, 4, 100);
-                AdjustScoreRadius(board, pellet.x + 1, pellet.y + 1, 3, 200);
-                AdjustScoreRadius(board, pellet.x + 1, pellet.y + 1, 2, 300);
+                AdjustGrid(pellet.x, pellet.y, 1000);
+                AdjustScoreRadius(board, pellet.x, pellet.y, 5, 50);
+                AdjustScoreRadius(board, pellet.x, pellet.y, 4, 100);
+                AdjustScoreRadius(board, pellet.x, pellet.y, 3, 200);
+                AdjustScoreRadius(board, pellet.x, pellet.y, 2, 300);
             }
         }
 
@@ -63,42 +63,37 @@ namespace JasonSnake.Controllers
         {
             //board loop
             Random r = new Random();
-            for (int x = 0; x < board.width + 2; x++) //2 so we can do edges
+            for (int x = -1; x < board.width + 1; x++) //2 so we can do edges
             {
-                for (int y = 0; y < board.height + 2; y++)
+                for (int y = -1; y < board.height + 1; y++)
                 {
                     GridScores.Add(x, y, r.Next(1, 5));// give every cell a start of 1-5
                     //edges
-                    if (y == 0 || y == board.height + 1 || x == 0 || x == board.width + 1)
+                    if (y == -1 || y == board.height || x == -1 || x == board.width)
                     {
                         AdjustGrid(x, y, -100000);
                     }
                 }
             }
+            
         }
 
         void AdjustScoreRadius(Board board, int pelletx, int pellety, int radius, int score)
         {
-            //https://stackoverflow.com/questions/12364690/calculate-the-coordinates-in-a-circle
-            //I'd rather iterate the dictionary but this will do
-            for (int x = 0; x < board.width + 2; x++) //2 so we can do edges
+            foreach (var coord in GridScores.Keys.ToList())
             {
-                for (int y = 0; y < board.height + 2; y++)
+                int deltaX = pelletx - coord.Item1, deltaY = pellety - coord.Item2;
+                // compare the square distance, to avoid an unnecessary square-root
+                if ((deltaX * deltaX) + (deltaY * deltaY) <= (radius * radius))
                 {
-                    int deltaX = pelletx - x, deltaY = pellety - y;
-                    // compare the square distance, to avoid an unnecessary square-root
-                    if ((deltaX * deltaX) + (deltaY * deltaY) <= (radius * radius))
-                    {
-                        AdjustGrid(x, y, score);
-                    }
+                    AdjustGrid(coord.Item1, coord.Item2, score);
                 }
             }
-
         }
 
         int GetScore(int x, int y)
         {
-            return GridScores[x + 1, y + 1];
+            return GridScores[x, y];
         }
 
         string GetMove(Snake you)
@@ -110,7 +105,7 @@ namespace JasonSnake.Controllers
             int rightscore = GetScore(head.x + 1, head.y);
             int leftscore = GetScore(head.x - 1, head.y);
 
-            //todo this is to predictable
+            //todo this is too predictable
             if (upscore >= downscore && upscore >= rightscore && upscore >= leftscore)
             {
                 move = "up";
